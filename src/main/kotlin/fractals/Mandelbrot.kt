@@ -27,9 +27,9 @@ class Mandelbrot {
      * false - в противном случае
      */
     fun isInSet(c: Complex): Boolean{
-        var z = Complex()//сменить на val
+        val z = Complex()
         for (i in 1..maxIters){
-            z = (z pow 2) + c
+            z.valueChange((z pow 2) + c)
             if (z.abs2() > r2) return false
         }
         return true

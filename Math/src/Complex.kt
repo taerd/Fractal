@@ -66,6 +66,11 @@ class Complex(var re: Double, var im: Double) {
         return r
     }
 
+    fun valueChange(c:Complex){
+        this.re=c.re
+        this.im=c.im
+    }
+
     /**
      * Метод модуля комплексного числа
      * @return модуль комплексного числа
