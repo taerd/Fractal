@@ -12,10 +12,11 @@ import java.awt.Graphics
  * Наследник класса Painter(абстрактный)
  */
 class FractalPainter(
-    val plane: CartesianScreenPlane
+    var plane: CartesianScreenPlane
 ) : Painter {
 
-    var fractalTest : ((Complex)->Boolean)? = null
+    var fractalTest : ((Complex)->Float)? = null
+    var getColor:((Float)->Color)={x->Color(x,x,x)}
 
     /**
      * Рисование фрактала
@@ -36,7 +37,7 @@ class FractalPainter(
                     )
                 ) ?: return
                 //Окрашиваем точку в зависимости принадлежит она множеству или нет
-                g.color = if (r) Color.BLACK else Color.WHITE
+                g.color = if (r == 1F) Color.BLACK else getColor(r)
                 g.fillRect(i, j, 1, 1)
             }
         }

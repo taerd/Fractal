@@ -9,6 +9,10 @@ import java.awt.Dimension
 import java.awt.event.*
 import javax.swing.GroupLayout
 import javax.swing.JFrame
+import graphics.colorScheme2
+import gui.graphics.MouseFramePainter
+import kotlin.math.max
+import kotlin.math.min
 
 
 /**
@@ -56,32 +60,83 @@ class MainWindow : JFrame(){
             -2.0, 1.0, -1.0, 1.0
         )
 
+        //Создание экземпляра класса с данной графикой mainPanel
+        val mfp = MouseFramePainter(mainPanel.graphics)
+
+        //Создаем экземпляр FractalPainter
+        val fp = FractalPainter(plane)
+
+        //Создаем фрактал типа мандерброта
+        val fractal = Mandelbrot()
+
         //Событие,которое возникает при изменении параметров панели
         mainPanel.addComponentListener(object : ComponentAdapter() {
             override fun componentResized(e: ComponentEvent?) {
                 plane.realWidth = mainPanel.width
                 plane.realHeight = mainPanel.height
+
+                //Перерисовывается графика
                 mainPanel.repaint()
+
+                //Перерисовывается графика MouseFramePainter
+                mfp.repaint(mainPanel.graphics)
             }
         })
 
-        //Событие,которое возникает при нажатии на панель
-        //Не используется пока что
+        //Событие,которое возникает когда кнопку мыши отжали
         mainPanel.addMouseListener(object: MouseAdapter(){
-            override fun mouseClicked(e: MouseEvent?) {
-                if (e == null) return
-                val cx = Converter.xScr2Crt(e.x, plane)
-                val cy = Converter.yScr2Crt(e.y, plane)
-                //mainPanel.repaint()
+            override fun mouseReleased(e: MouseEvent?) {
+                e?.let{
+
+                    mfp.currentPoint=it.point
+
+                    //Создание новой разметки
+                    val newPlane=CartesianScreenPlane(
+                            mainPanel.width,
+                            mainPanel.height,
+                            Converter.xScr2Crt(min((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane),
+                            Converter.xScr2Crt(max((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane),
+                            Converter.yScr2Crt(max((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane),
+                            Converter.yScr2Crt(min((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane)
+                    )
+                    //Изменение разметки
+                    plane.xMin=newPlane.xMin
+                    plane.xMax=newPlane.xMax
+                    plane.yMin=newPlane.yMin
+                    plane.yMax=newPlane.yMax
+
+                    //БАГ- ПОЧЕМУ ТО ПЕРЕВОРАЧИВАЕТСЯ ВЫДЕЛЯЕМАЯ ЗОНА
+                    //Перерисовываются пэинтеры у graphics panel(а именно fractal painter по новому plane так как var plane в его инициализации)
+                    //mainPanel.paint(mainPanel.graphics)
+
+                    //Перерисовывается графика
+                    mainPanel.repaint()
+                }
+                mfp.isVisible=false
+            }
+
+            //Событие возникает когда нажали на кнопку
+            override fun mousePressed(e: MouseEvent?) {
+                e?.let {
+                    mfp.isVisible = true
+                    mfp.startPoint = it.point
+                }
             }
         })
 
-        //Создаем экземпляр FractalPainter
-        val fp = FractalPainter(plane)
-        //Создаем фрактал типа мандерброта
-        val fractal = Mandelbrot()
+        //Событие,которое возникает при движении курсора мыши по панели
+        mainPanel.addMouseMotionListener(object:MouseAdapter(){
+            override fun mouseDragged(e: MouseEvent?) {
+                e?.let{
+                    mfp.currentPoint=it.point
+                }
+            }
+        })
+
         //"Привязка события" явно указываем функциональную переменную класса FractalPainter
         fp.fractalTest = fractal::isInSet
+        //"Привязка события" явно указываем функциональную переменную функции colorScheme1
+        fp.getColor = ::colorScheme2
 
         mainPanel.addPainter(fp)
 
