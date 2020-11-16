@@ -105,12 +105,16 @@ class MainWindow : JFrame(){
                     plane.yMin=newPlane.yMin
                     plane.yMax=newPlane.yMax
 
-                    //БАГ- ПОЧЕМУ ТО ПЕРЕВОРАЧИВАЕТСЯ ВЫДЕЛЯЕМАЯ ЗОНА
                     //Перерисовываются пэинтеры у graphics panel(а именно fractal painter по новому plane так как var plane в его инициализации)
                     //mainPanel.paint(mainPanel.graphics)
 
                     //Перерисовывается графика
+                    //Вопрос включает ли метод repaint() вызов mainPanel.paint? или мы приближаем картинку не строя ее заного
                     mainPanel.repaint()
+
+                    //Удаляем позиции чтобы не оставалось следа от рамки
+                    mfp.currentPoint=null
+                    mfp.startPoint=null
                 }
                 mfp.isVisible=false
             }

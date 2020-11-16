@@ -41,7 +41,7 @@ class MouseFramePainter(var g:Graphics ) {
                     //исключающий или
                     g.setXORMode(Color.WHITE)//второй цвет от которого зависит цвет пикселя
                     if (s.x < c.x && s.y > c.y)
-                        g.drawRect(s.x,c.y,c.x-s.x,s.y-c.y)//рамка слева направо снизу вверх
+                        g.drawRect(s.x,s.y,c.x-s.x,s.y-c.y)//рамка слева направо снизу вверх
                     else if (s.x > c.x && s.y > c.y)
                         g.drawRect(c.x,c.y,s.x-c.x,s.y-c.y)//рамка справа налево снизу вверх
                     else if(s.x > c.x && s.y < c.y )//рамка справа налево сверху вниз
