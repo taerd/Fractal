@@ -75,8 +75,10 @@ class MainWindow : JFrame(){
                 plane.realWidth = mainPanel.width
                 plane.realHeight = mainPanel.height
 
+                /*
                 //Перерисовывается графика
                 mainPanel.repaint()
+                */
 
                 //Перерисовывается графика MouseFramePainter
                 mfp.repaint(mainPanel.graphics)
@@ -86,36 +88,30 @@ class MainWindow : JFrame(){
         //Событие,которое возникает когда кнопку мыши отжали
         mainPanel.addMouseListener(object: MouseAdapter(){
             override fun mouseReleased(e: MouseEvent?) {
-                e?.let{
-
-                    mfp.currentPoint=it.point
-
-                    //Создание новой разметки
-                    val newPlane=CartesianScreenPlane(
-                            mainPanel.width,
-                            mainPanel.height,
-                            Converter.xScr2Crt(min((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane),
-                            Converter.xScr2Crt(max((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane),
-                            Converter.yScr2Crt(max((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane),
-                            Converter.yScr2Crt(min((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane)
-                    )
-                    //Изменение разметки
-                    plane.xMin=newPlane.xMin
-                    plane.xMax=newPlane.xMax
-                    plane.yMin=newPlane.yMin
-                    plane.yMax=newPlane.yMax
-
-                    //Перерисовываются пэинтеры у graphics panel(а именно fractal painter по новому plane так как var plane в его инициализации)
-                    //mainPanel.paint(mainPanel.graphics)
-
-                    //Перерисовывается графика
-                    //Вопрос включает ли метод repaint() вызов mainPanel.paint? или мы приближаем картинку не строя ее заного
-                    mainPanel.repaint()
-
-                    //Удаляем позиции чтобы не оставалось следа от рамки
-                    mfp.currentPoint=null
-                    mfp.startPoint=null
+                e?.let {
+                    mfp.currentPoint = it.point
                 }
+
+                val xMin = Converter.xScr2Crt(min((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane)
+                val xMax = Converter.xScr2Crt(max((mfp.currentPoint?.x)?:return,(mfp.startPoint?.x)?:return),plane)
+                val yMin = Converter.yScr2Crt(max((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane)
+                val yMax = Converter.yScr2Crt(min((mfp.currentPoint?.y)?:return,(mfp.startPoint?.y)?:return),plane)
+
+                //Изменение разметки
+                plane.also{
+                    it.xMin=xMin
+                    it.xMax=xMax
+                    it.yMin=yMin
+                    it.yMax=yMax
+                }
+
+                //Перерисовывается графика
+                mainPanel.repaint()
+
+                //Удаляем позиции чтобы не оставалось следа от рамки
+                mfp.currentPoint=null
+                mfp.startPoint=null
+
                 mfp.isVisible=false
             }
 
