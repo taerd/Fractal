@@ -32,6 +32,9 @@ class MouseFramePainter(var g:Graphics ) {
             }
         }
 
+    /**
+     * Метод отрисовки рамки
+     */
     private fun paint(){
         if(isVisible){
             g.color = Color.BLACK
